@@ -1,0 +1,191 @@
+bin/package.bat 在项目的目录下执行
+然后会在项目下生成 target文件夹包含 war 或jar （多模块生成在ruoyi-admin）
+
+1、jar部署方式
+使用命令行执行：java –jar RuoYi.jar 或者执行脚本：bin/run.bat
+
+2、war部署方式
+pom.xml packaging修改为war 放入tomcat服务器webapps
+
+前端部署,运行build.bat文件
+构建打包成功之后，会在根目录生成 dist 文件夹，里面就是构建打包好的文件，通常是 ***.js 、***.css、index.html 等静态文件。
+通常情况下 dist 文件夹的静态文件发布到你的 nginx 或者静态服务器即可，其中的 index.html 是后台服务的入口页面
+
+Nginx配置
+
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+		location / {
+            root   /home/ruoyi/projects/ruoyi-ui;
+			try_files $uri $uri/ /index.html;
+            index  index.html index.htm;
+        }
+		
+		location /prod-api/{
+			proxy_set_header Host $http_host;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header REMOTE-HOST $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_pass http://localhost:8080/;
+		}
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+}
+
+
+ 若依框架,内置功能
+1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
+2.  部门管理：配置系统组织机构（公司、部门、小组），树结构展现支持权限。
+3.  岗位管理：配置系统用户所属担任职务。
+4.  菜单管理：配置系统菜单，操作权限，按钮权限标识等。
+5.  角色管理：角色菜单权限分配、设置角色按机构进行数据范围权限划分。
+6.  字典管理：对系统中经常使用的一些较为固定的数据进行维护。
+7.  参数管理：对系统动态配置常用参数。
+8.  通知公告：系统通知公告信息发布维护。
+9.  操作日志：系统正常操作日志记录和查询；系统异常信息日志记录和查询。
+10.  登录日志：系统登录日志记录查询包含登录异常。
+11. 在线用户：当前系统中活跃用户状态监控。
+12. 定时任务：在线（添加、修改、删除)任务调度包含执行结果日志。
+13. 代码生成：前后端代码的生成（java、html、xml、sql)支持CRUD下载 。
+14. 系统接口：根据业务代码自动生成相关的api接口文档。
+15. 服务监控：监视当前系统CPU、内存、磁盘、堆栈等相关信息。
+16. 在线构建器：拖动表单元素生成相应的HTML代码。
+17. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
+
+com.ruoyi     
+├── common             // 工具类
+│       └── constant                      // 通用常量
+│       └── core                          // 核心控制
+│       └── enums                         // 通用枚举
+│       └── exception                     // 通用异常
+│       └── utils                         // 通用类处理
+│       └── xss                           // XSS过滤处理
+├── framework          // 框架核心
+│       └── aspectj                       // 注解实现
+│       └── config                        // 系统配置
+│       └── datasource                    // 数据权限
+│       └── manager                       // 异步处理
+│       └── redis                         // 缓存处理
+│       └── security                      // 权限控制
+│       └── web                           // 前端控制
+├── project            // 系统模块
+│       └── common                        // 通用处理
+│       └── monitor                       // 系统监控
+│       └── system                        // 系统管理
+│       └── tool                          // 系统工具
+├── RuoYiApplication   // 启动程序
+
+前端结构
+├── build                      // 构建相关  
+├── bin                        // 执行脚本
+├── public                     // 公共文件
+│   ├── favicon.ico            // favicon图标
+│   └── index.html             // html模板
+├── src                        // 源代码
+│   ├── api                    // 所有请求
+│   ├── assets                 // 主题 字体等静态资源
+│   ├── components             // 全局公用组件
+│   ├── directive              // 全局指令
+│   ├── layout                 // 布局
+│   ├── router                 // 路由
+│   ├── store                  // 全局 store管理
+│   ├── utils                  // 全局公用方法
+│   ├── views                  // view
+│   ├── App.vue                // 入口页面
+│   ├── main.js                // 入口 加载组件 初始化等
+│   ├── permission.js          // 权限管理
+│   └── settings.js            // 系统配置
+├── .editorconfig              // 编码格式
+├── .env.development           // 开发环境配置
+├── .env.production            // 生产环境配置
+├── .env.staging               // 测试环境配置
+├── .eslintignore              // 忽略语法检查
+├── .eslintrc.js               // eslint 配置项
+├── .gitignore                 // git 忽略项
+├── babel.config.js            // babel.config.js
+├── package.json               // package.json
+└── vue.config.js              // vue.config.js
+
+
+核心技术
+
+TIP
+    前端技术栈 ES6、vue、vuex、vue-router、vue-cli、axios、element-ui
+    后端技术栈 SpringBoot、MyBatis、Spring Security、Jwt
+
+后端技术
+#
+SpringBoot框架
+
+1、介绍
+Spring Boot是一款开箱即用框架，提供各种默认配置来简化项目配置。让我们的Spring应用变的更轻量化、更快的入门。 在主程序执行main函数就可以运行。你也可以打包你的应用为jar并通过使用java -jar来运行你的Web应用。它遵循"约定优先于配置"的原则， 使用SpringBoot只需很少的配置，大部分的时候直接使用默认的配置即可。可以与Spring Cloud的微服务无缝结合。
+Spring Boot2.0 环境要求必须是jdk8或以上版本，Tomcat8或以上版本
+
+2、优点
+使编码变得简单： 推荐使用注解。
+使配置变得简单： 自动配置、快速构建项目、快速集成新技术能力 没有冗余代码生成和XML配置的要求
+使部署变得简单： 内嵌Tomcat、Jetty、Undertow等web容器，无需以war包形式部署
+使监控变得简单： 自带项目监控
+#
+Spring Security安全控制
+
+1、介绍
+Spring Security是一个能够为基于Spring的企业应用系统提供声明式的安全访问控制解决方案的安全框架。
+
+2、功能
+Authentication： 认证，就是用户登录
+Authorization： 授权，判断用户拥有什么权限，可以访问什么资源
+安全防护，跨站脚本攻击，session攻击等
+非常容易结合Spring进行使用
+
+3、Spring Security 与 Shiro 的区别
+
+    相同点
+
+1、认证功能
+2、授权功能
+3、加密功能
+4、会话管理
+5、缓存支持
+6、rememberMe功能
+....
+
+    不同点
+
+优点：
+
+1、Spring Security基于Spring开发，项目如果使用Spring作为基础，配合Spring Security做权限更加方便。而Shiro需要和Spring进行整合开发
+2、Spring Security功能比Shiro更加丰富，例如安全防护方面
+3、Spring Security社区资源相对比Shiro更加丰富
+
+缺点：
+
+1）Shiro的配置和使用比较简单，Spring Security上手复杂些
+2）Shiro依赖性低，不需要依赖任何框架和容器，可以独立运行。Spring Security依赖Spring容器
+#
+前端技术
+
+    npm：node.js的包管理工具，用于同一管理我们前端项目中需要用到的包、插件、工具、命令等，便于开发和维护。
+    ES6：Javascript的新版本，ECMAScript6的简称。利用ES6我们可以简化我们的JS代码，同时利用其提供的强大功能来快速实现JS逻辑。
+    vue-cli：Vue的脚手架工具，用于自动生成Vue项目的目录及文件。
+    vue-router： Vue提供的前端路由工具，利用其我们实现页面的路由控制，局部刷新及按需加载，构建单页应用，实现前后端分离。
+    vuex：Vue提供的状态管理工具，用于同一管理我们项目中各种数据的交互和重用，存储我们需要用到数据对象。
+    element-ui：基于MVVM框架Vue开源出来的一套前端ui组件。
